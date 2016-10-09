@@ -1,5 +1,5 @@
 inputFile = open("unemployment.csv", "r")
-outputFile = open("unemployment2.csv", "w")
+sortedFile = open("unemployment2.csv", "w")
 InputFileList=[]
 
 #read header line
@@ -12,21 +12,16 @@ for line in inputFile:
 #sort the dates
 InputFileList.sort()
 
-# add a row for unemployment average
-    
-
-
 #write to output file
 print(headerLine,file=outputFile)
 for row in InputFileList:
     test=','.join(row)
-    print(test,file=outputFile)
-
+    print(test,file=sortedFile)
 
 
 #close files
 inputFile.close()
-outputFile.close()
+sortedFile.close()
 
 
 
