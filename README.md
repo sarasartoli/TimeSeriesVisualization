@@ -9,5 +9,5 @@ In this project, student will work on the US employment data available on Bureau
 
 
 ## How to execute:
-the final version is uploaded as TimeSeriesVisualization.zip
+The final version is uploaded as TimeSeriesVisualization.zip. Put the content of the root folder on your root directory and open it in a webbrowser.
 
