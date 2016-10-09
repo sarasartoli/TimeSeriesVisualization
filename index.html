@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/topojson/1.1.0/topojson.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<!--D3 library-->
+<script src="//d3js.org/d3.v4.min.js"></script>
+  <!--slider library-->
+  <link href="slider/nouislider.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styleSheets/main.css">
+    
+</head>
+
+<body>
+<div id="LineChart">
+<h1 align="center"> United States Unemployment Rate </h1>
+<svg id="LineChart" width="1000" height="500"></svg>
+<script src="chart.js"></script>
+
+</div>
+<div id="controlBar">
+<div id="tooltip-container">	
+</div>
+<div id="canvas-svg"></div>
+<script>
+var minDate="1978";
+var maxDate="2017";
+
+d3.csv("average.csv", function(err, data) {
+
+  var config = {"color1":"#d3e5ff","color2":"#08306B","stateDataColumn":"state","valueDataColumn":"rate"}
+  
+  var WIDTH = 250, HEIGHT = 500;
+  
+  var COLOR_COUNTS = 9;
+  
+  var SCALE = 0.3;
+
+
+
+
+  function Interpolate(start, end, steps, count) {
+      var s = start,
+          e = end,
+          final = s + (((e - s) / steps) * count);
+      return Math.floor(final);
+  }
+  
+  function Color(_r, _g, _b) {
+      var r, g, b;
+      var setColors = function(_r, _g, _b) {
+          r = _r;
+          g = _g;
+          b = _b;
+      };
+  
+      setColors(_r, _g, _b);
+      this.getColors = function() {
+          var colors = {
+              r: r,
+              g: g,
+              b: b
+          };
+          return colors;
+      };
+  }
+  
+  function hexToRgb(hex) {
+      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+      } : null;
+  }
+
+  
+  function valueFormat(d) {
+    if (d > 1000000000) {
+      return Math.round(d / 1000000000 * 10) / 10 + "B";
+    } else if (d > 1000000) {
+      return Math.round(d / 1000000 * 10) / 10 + "M";
+    } else if (d > 1000) {
+      return Math.round(d / 1000 * 10) / 10 + "K";
+    } else {
+      return d;
+    }
+  }
+  
+  var COLOR_FIRST = config.color1, COLOR_LAST = config.color2;
+  
+  var rgb = hexToRgb(COLOR_FIRST);
+  
+  var COLOR_START = new Color(rgb.r, rgb.g, rgb.b);
+  
+  rgb = hexToRgb(COLOR_LAST);
+  var COLOR_END = new Color(rgb.r, rgb.g, rgb.b);
+  
+  var MAP_STATE = config.stateDataColumn;
+  var MAP_VALUE = config.valueDataColumn;
+  
+  var width = WIDTH,
+      height = HEIGHT;
+  
+  var valueById = d3.map();
+  
+  var startColors = COLOR_START.getColors(),
+      endColors = COLOR_END.getColors();
+  
+  var colors = [];
+  
+  for (var i = 0; i < COLOR_COUNTS; i++) {
+    var r = Interpolate(startColors.r, endColors.r, COLOR_COUNTS, i);
+    var g = Interpolate(startColors.g, endColors.g, COLOR_COUNTS, i);
+    var b = Interpolate(startColors.b, endColors.b, COLOR_COUNTS, i);
+    colors.push(new Color(r, g, b));
+  }
+  
+  var quantize = d3.scale.quantize()
+      .domain([0, 1.0])
+      .range(d3.range(COLOR_COUNTS).map(function(i) { return i }));
+  
+  var path = d3.geo.path();
+  
+  var svg2 = d3.select("#canvas-svg").append("svg")
+      .attr("width", width)
+      .attr("height", height);
+  
+  d3.tsv("https://s3-us-west-2.amazonaws.com/vida-public/geo/us-state-names.tsv", function(error, names) {
+  
+  name_id_map = {};
+  id_name_map = {};
+  
+  for (var i = 0; i < names.length; i++) {
+    name_id_map[names[i].name] = names[i].id;
+    id_name_map[names[i].id] = names[i].name;
+  }
+  
+  data.forEach(function(d) {
+    var id = name_id_map[d[MAP_STATE]];
+    valueById.set(id, +d[MAP_VALUE]); 
+  });
+  
+  quantize.domain([d3.min(data, function(d){ return +d[MAP_VALUE] }),
+    d3.max(data, function(d){ return +d[MAP_VALUE] })]);
+  
+  d3.json("https://s3-us-west-2.amazonaws.com/vida-public/geo/us.json", function(error, us) {
+    svg2.append("g")
+      .attr("class", "states-choropleth")
+      .selectAll("path")
+        .data(topojson.feature(us, us.objects.states).features)
+      .enter().append("path")
+        .attr("transform", "scale(" + SCALE + ")")
+        .attr("class","stateClass")
+        .style("fill", function(d) {
+
+          if (valueById.get(d.id)) {
+            var i = quantize(valueById.get(d.id));
+            var color = colors[i].getColors();
+            return "rgb(" + color.r + "," + color.g +
+                "," + color.b + ")";
+          } else {
+            return "";
+          }
+        })
+        .attr("d", path)
+        .on("mousemove", function(d) {
+            var html = "";
+  
+            html += "<div class=\"tooltip_kv\">";
+            html += "<span class=\"tooltip_key\">";
+            html += id_name_map[d.id];
+            html += "</span>";
+            html += "<span class=\"tooltip_value\">";
+            html += (valueById.get(d.id) ? valueFormat(valueById.get(d.id)) : "");
+            html += "";
+            html += "</span>";
+            html += "</div>";
+            
+            $("#tooltip-container").html(html);
+            $(this).attr("fill-opacity", "0.8");
+            $("#tooltip-container").show();
+            
+            var coordinates = d3.mouse(this);
+            
+            var map_width = $('.states-choropleth')[0].getBoundingClientRect().width;
+            
+            if (d3.event.layerX < map_width / 2) {
+              d3.select("#tooltip-container")
+                .style("top", (d3.event.layerY + 15) + "px")
+                .style("left", (d3.event.layerX + 15) + "px");
+            } else {
+              var tooltip_width = $("#tooltip-container").width();
+              d3.select("#tooltip-container")
+                .style("top", (d3.event.layerY + 15) + "px")
+                .style("left", (d3.event.layerX - tooltip_width - 30) + "px");
+            }
+        })
+        .on("mouseout", function() {
+                $(this).attr("fill-opacity", "1.0");
+                $("#tooltip-container").hide();
+            })
+
+        .on("dblclick",function(d)
+        {
+        	d3.selectAll("path.line").remove();
+        	d3.selectAll("text.linetext").remove();
+          selected=[];
+          nation=[];
+          d3.selectAll("path.stateClass").style("fill", function(d) {
+          if (valueById.get(d.id)) {
+            var i = quantize(valueById.get(d.id));
+            var color = colors[i].getColors();
+            return "rgb(" + (color.r) + "," + color.g +
+                "," + color.b + ")";
+          } else {
+            return "";
+          }
+        }); 
+
+
+        })
+        	
+
+        .on("click", function(d)
+                 {
+                     d3.select(this).style("fill", z(id_name_map[d.id]));
+
+         		 	 	     selected.push(id_name_map[d.id]);
+         		 	 	     state.append("path")
+      				 		  .attr("class", "line")
+      				 		  .attr("d", function(d) {
+
+                    //console.log(d.values);
+                    updated=d.values.filter(function(element)
+                    {
+
+                        if(element.date>=parseYear(+minDate) && element.date<=parseYear(+maxDate)) 
+                            return 1;
+                        else 
+                            return 0;
+              
+
+                    });
+
+                    //console.log(updated);
+
+        		   			
+
+                    for(var i=0;i<selected.length;i++)
+         		    		{
+            					if(d.id==selected[i])
+              						return line(updated);
+
+                      if(d.id==nation[i])
+                          return line(updated);
+         		 			}
+
+     			 				})
+
+     				 .style("stroke", function(d) { 
+
+                  return z(d.id); 
+
+     					 })
+
+             .style("stroke-width",1.5)
+             .on("mouseover", function(d1){   
+                d3.selectAll("path.line").style("stroke-width",0.25);
+                d3.select(this).style("stroke-width",3);
+
+                // update the color of the map when mouseOver 
+                
+                d3.selectAll("path.stateClass").style("fill-opacity", function(d) {
+
+          			if(id_name_map[d.id] == d1.id)
+          			{
+          				return 0.8;
+          			}
+          			else
+          			return 0.1;
+
+              }); 
+        // end of map update
+
+
+
+
+              })
+
+             .on("mouseout", function(){
+                d3.selectAll("path.line").style("stroke-width",1.5);
+                d3.selectAll("path.stateClass").style("fill-opacity",0.8);
+      });
+
+
+
+      state.append("text")
+      .attr("class","linetext")
+      .datum(function(d) {  return {id: d.id, value: d.values[d.values.length - 1]};  })
+
+      .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.UER) + ")"; })
+      .attr("x", 3)
+      .attr("dy", "0.35em")
+      .style("font", "10px sans-serif")
+      .text(function(d) { 
+
+        for(var i=0;i<selected.length;i++)
+        {
+          if(d.id==selected[i])
+            return d.id; 
+          if(d.id==nation[i])
+            return d.id; 
+
+        }
+    
+      }); 
+
+
+
+                }
+
+
+          );
+
+  
+    svg2.append("path")
+        .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+        .attr("class", "states")
+        .attr("transform", "scale(" + SCALE + ")")
+        .attr("d", path);
+  });
+  
+  });
+});
+
+</script>
+<div id="buttonHolder">	<button id="button" onclick="displayNationWide()"> Nationwide Unemployment Rate </button></div>
+<div id="barText">
+        Please Set Year Range<br><br>
+</div>  
+      <!--Slider--> 
+ <div id="barRange">
+        <div id="range" height="400"></div>
+ </div>
+     <!-- Slider -->
+    <script src="slider/nouislider.min.js"></script>
+    <script src="slider/mySlider.js"></script>
+    <script>
+    //slider
+    range.noUiSlider.on('update', function( values, handle ) {
+    
+
+    d3.selectAll("path.line").remove();
+    d3.selectAll("text.linetext").remove();
+
+    if ( handle ) {
+        maxDate = values[handle];
+       } else {
+        minDate = values[handle];
+       }
+
+    x.domain(d3.extent([parseYear(+minDate),parseYear(+maxDate)]));
+    d3.select("g.axis").call(d3.axisBottom(x));
+    
+  //Update Selected Items
+  
+
+  state.append("path")
+    .attr("class", "line")
+      .attr("d", function(p) {
+
+
+        for(var i=0;i<selected.length;i++)
+          {
+              
+              updated=p.values.filter(function(value)
+              {
+
+                if(value.date>=parseYear(+minDate) && value.date<=parseYear(+maxDate)) 
+                      return 1;
+                else 
+                      return 0;
+              
+
+              });
+
+              if(p.id==selected[i])
+                  {
+
+                    return line(updated); 
+                  }
+
+              if(p.id==nation[i])
+                    return line(updated); 
+          }
+
+
+     })
+    .style("stroke", function(d) { 
+
+          return z(d.id); 
+
+    })
+
+
+    .on("mouseover", function(d1){   
+      d3.selectAll("path.line").style("stroke-width",0.25);
+        d3.select(this).style("stroke-width",3);
+
+    // update the color of the map when mouseOver 
+                
+        d3.selectAll("path.stateClass").style("fill-opacity", function(d) {
+
+          if(id_name_map[d.id] == d1.id)
+            {
+                return 0.8;
+            }
+            else
+                return 0.1;
+
+            }); 
+        // end of map update
+
+
+
+
+              })
+
+             .on("mouseout", function(){
+                d3.selectAll("path.line").style("stroke-width",1.5);
+                d3.selectAll("path.stateClass").style("fill-opacity",0.8);
+      });
+  
+// Update Selected Items
+
+
+      });
+
+    
+    </script>
+</body>

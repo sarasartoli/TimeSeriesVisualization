@@ -1,0 +1,101 @@
+.slider{
+	
+	margin-top:100px;
+	width:100px;
+	height:100px;
+	
+}
+
+
+
+.noUi-connect {
+
+background:#606161;
+
+}
+
+
+
+#range {
+	height: 300px;
+}
+
+#controlBar {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 20px;
+}
+
+#buttonHolder {
+
+    position: absolute;
+    top: 190px;
+    right: 20px;
+
+}
+
+#barText {
+
+    position: absolute;
+    top: 230px;
+    right: 50px;
+    font-size: 15px;
+
+}
+
+#barRange {
+
+    position: absolute;
+    top: 270px;
+    right: 120px;
+    font-size: 15px;
+}
+
+h1 {
+    color: #055EAC;
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+#LineChart {margin-left:auto; margin-right:auto; display:block;}
+
+
+.states {
+  fill: none;
+  stroke: #fff;
+  stroke-linejoin: round;
+}
+
+.states-choropleth {
+  fill: #ccc;
+}
+
+#tooltip-container {
+  position: absolute;
+  background-color: #fff;
+  color: #000;
+  padding: 10px;
+  border: 1px solid;
+  display: none;
+}
+
+#button {
+	    background-color: #ff9900  ;
+}
+
+.tooltip_key {
+  font-weight: bold;
+}
+
+.tooltip_value {
+  margin-left: 20px;
+  float: right;
+}
+
+
+
