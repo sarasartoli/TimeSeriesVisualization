@@ -17,10 +17,13 @@ The data file used for this project is from BLS website. I did some preprocessin
 2. change data such that the data of each state is stored in a single column.
 3. Sorting the Data File Base on date
 
-## Effect of Financial Crisis (2007-2008) on Unemployment Rate
+## Finding 1: Effect of Financial Crisis (2007-2008) on Unemployment Rate
 The financial crisis of 2007–09, also known as the global financial crisis and the 2008-09 financial crisis, is considered by many economists to have been the worst financial crisis since the Great Depression of the 1930s. financial crisis had a great effect on US unemployment rate. The U.S. unemployment rate increased to 10.1% by October 2009, the highest rate since 1983 and roughly twice the pre-crisis rate. you can observe the effect of USA financial crisis in the following figure.
 
 ![Alt text](https://github.com/sarasartoli/TimeSeriesVisualization/blob/master/Screenshot%202016-10-10%2013.17.14.png?raw=true)
+
+## Finding 2: Yearly Increase of Unemployment Rate in May
+according to the unemployment rate time series. unemployment increase each year in May and decrease again in August. The reason of this change of Rate is the student graduation season which is usually in May 15th.
 
 
 
