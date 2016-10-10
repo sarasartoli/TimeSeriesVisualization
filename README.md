@@ -22,10 +22,20 @@ The financial crisis of 2007–09, also known as the global financial crisis and
 
 ![Alt text](https://github.com/sarasartoli/TimeSeriesVisualization/blob/master/Screenshot%202016-10-10%2013.17.14.png?raw=true)
 
-## Finding 2: Yearly Increase of Unemployment Rate in May
+
+## Finding 2: post-World War II Economic Downturn Effect on Unemployment Rate
+
+
+## Finding 3: Yearly Increase of Unemployment Rate in May
 according to the unemployment rate time series. unemployment increase each year in May and decrease again in August. The reason of this change of Rate is the student graduation season which is usually in May 15th.
 
 ![Alt text](https://github.com/sarasartoli/TimeSeriesVisualization/blob/master/August.png?raw=true)
+
+
+## Bonus: Sudden Drop Causes:
+* financial crisis in 2008
+* post-World War II economic downturn occurred in the early 1980s
+
 
 
 
