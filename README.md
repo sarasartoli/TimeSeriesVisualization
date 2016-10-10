@@ -25,5 +25,8 @@ The financial crisis of 2007–09, also known as the global financial crisis and
 ## Finding 2: Yearly Increase of Unemployment Rate in May
 according to the unemployment rate time series. unemployment increase each year in May and decrease again in August. The reason of this change of Rate is the student graduation season which is usually in May 15th.
 
+![Alt text](https://github.com/sarasartoli/TimeSeriesVisualization/blob/master/August.png?raw=true)
+
+
 
 
