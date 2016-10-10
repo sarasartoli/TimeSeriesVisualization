@@ -4,6 +4,7 @@ please click to watch overview video.
 
 
 
+
 ## Project Description
 In this project, student will work on the US employment data available on Bureau of Labor and Statistics. Data description can be found on the website. In particular, we will focus on employment rate by state.
 
@@ -23,7 +24,8 @@ The financial crisis of 2007–09, also known as the global financial crisis and
 ![Alt text](https://github.com/sarasartoli/TimeSeriesVisualization/blob/master/Screenshot%202016-10-10%2013.17.14.png?raw=true)
 
 
-## Finding 2: post-World War II Economic Downturn Effect on Unemployment Rate
+## Finding 2: post-World War II Economic Downturn Effect on Unemployment Rate in 1983
+![Alt text](https://github.com/sarasartoli/TimeSeriesVisualization/blob/master/war.png?raw=true)
 
 
 ## Finding 3: Yearly Increase of Unemployment Rate in May
@@ -35,6 +37,7 @@ according to the unemployment rate time series. unemployment increase each year 
 ## Bonus: Sudden Drop Causes:
 * financial crisis in 2008
 * post-World War II economic downturn occurred in the early 1980s
+
 
 
 
