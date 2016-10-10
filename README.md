@@ -11,6 +11,11 @@ In this project, student will work on the US employment data available on Bureau
 ## How to Execute
 The final version is uploaded as TimeSeriesVisualization.zip. Put the content of the root folder on your root directory and open it in a webbrowser.
 
+## Data File Preprocessing
+The data file used for this project is from BLS website. I did some preprocessing (in Python) for following purposes:
+1. change date format
+2. change data such that the data of each state is stored in a single column.
+3. Sorting the Data File Base on date
 
 ## Effect of Financial Crisis (2007-2008) on Unemployment Rate
 The financial crisis of 2007–09, also known as the global financial crisis and the 2008-09 financial crisis, is considered by many economists to have been the worst financial crisis since the Great Depression of the 1930s. financial crisis had a great effect on US unemployment rate. The U.S. unemployment rate increased to 10.1% by October 2009, the highest rate since 1983 and roughly twice the pre-crisis rate. you can observe the effect of USA financial crisis in the following figure.
